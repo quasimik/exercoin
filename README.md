@@ -21,7 +21,7 @@ Your Daily Token Exercise.
 
 # Contract  
 We are using the Ropsten test network  
-Address: 0x82ea802a3abfd35c5bf47fb210786a9a260ef49d1f4c598544f5f70acc458b98  
+Address: 0x2dee7a447dc2376c9159ff4b4caf3ae0c6cc31cd
 https://ropsten.etherscan.io/tx/0x82ea802a3abfd35c5bf47fb210786a9a260ef49d1f4c598544f5f70acc458b98  
 
 Get test ethers here: https://faucet.metamask.io/  
