@@ -1,6 +1,7 @@
 .*.swp
 .idea
 
+node_modules
 venv
 __pycache__
 halecoin-client/node_modules
