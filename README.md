@@ -4,12 +4,12 @@ Your Daily Token Exercise.
 
 # Installation
 
-* Clone the repo and cd into it
-* $ sudo pip3 install virtualenv
-* $ virtualenv -p python3 venv
-* $ export FLASK_APP=index.py
+1. Clone the repo and cd into it
+1. `$ sudo pip3 install virtualenv`
+1. `$ virtualenv -p python3 venv`
+1. `$ export FLASK_APP=index.py`
 
 # Running
 
-* $ . venv/bin/activate
-* $ flask run
+1. `$ . venv/bin/activate`
+1. `$ flask run`
