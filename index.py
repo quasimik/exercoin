@@ -1,8 +1,15 @@
 from flask import Flask
-from web3 import Web3, HTTPProvider
+from web3 import Web3, HTTPProvider, TestRPCProvider
 
-web3 = Web3(HTTPProvider('http://localhost:5000'))
-block = web3.eth.getBlock('latest')
+web3 = Web3(TestRPCProvider(host='localhost', port='8545'))
+
+with open('coin.abi', 'r') as abi_definition:
+	abi = json.load(abi_definition)
+contract_address = 0x2dee7a447dc2376c9159ff4b4caf3ae0c6cc31cd
+contract = web3.eth.contract(abi, contract_address)
+
+
+# block = web3.eth.getBlock('latest')
 
 app = Flask(__name__)
 
