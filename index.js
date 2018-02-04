@@ -25,7 +25,7 @@ watch('./openpose-json/', { filter: /\.json$/ }, function(evt, name) {
 
 			// parse if valid data
 			var raw = JSON.parse(data)
-			if(raw.people !== null && raw.people[0].pose_keypoints !== null) {
+			if(raw.people !== null && raw.people.length > 0 && raw.people[0].pose_keypoints !== null) {
 				raw = raw.people[0].pose_keypoints
 				
 				var keypoints = []
@@ -58,14 +58,16 @@ watch('./openpose-json/', { filter: /\.json$/ }, function(evt, name) {
 				keyAngles.set("lside", angle(reversed(lside), x))
 				keyAngles.set("rside", angle(reversed(rside), x))
 
-				console.log(name, keyAngles)
+				var check = checkPushup(keyAngles)
+				if(check != null && check > 0.25) console.log("down")
+				if(check != null && check < -0.25) console.log("up")
 			}
 		});
 	}
 	
 })
 
-// null for not in pushup, negative value for up, positive for down
+// null for not in pushup, otherwise [up, down]
 // magnitude -> confidence
 function checkPushup(keyAngles) {
 	var up = 0, down = 0
@@ -94,12 +96,22 @@ function checkPushup(keyAngles) {
 	if(lside[0] > Math.PI/4 && rside[0] > Math.PI/4) return null
 
 	// up confidence
-	if(lside != 0 && angleInThreshold(lside[0], Math.PI/6, 0.1)) up += lside[1] // body angle close to 30 deg
-	if(rside != 0 && angleInThreshold(rside[0], Math.PI/6, 0.1)) up += rside[1] // from horizontal
-	if(lshoulder != 0 && angleInThreshold(lshoulder[0], Math.PI/3, 0.2)) up += lshoulder[1] // shoulder angles close 
-	if(rshoulder != 0 && angleInThreshold(rshoulder[0], Math.PI/3, 0.2)) up += rshoulder[1] // to 60 deg
-	if(lelbow != 0 && angleInThreshold(lelbow[0], Math.PI/3, 0.25)) up += lelbow[1] // elbow angles close 
-	if(relbow != 0 && angleInThreshold(relbow[0], Math.PI/3, 0.25)) up += relbow[1] // to 60 deg
+	if(lside != 0 && angleInThreshold(lside[0], Math.PI/6, 0.25)) up += lside[1] // body angle close to 30 deg
+	if(rside != 0 && angleInThreshold(rside[0], Math.PI/6, 0.25)) up += rside[1] // from horizontal
+	if(lshoulder != 0 && angleInThreshold(lshoulder[0], Math.PI/3, 0.25)) up += lshoulder[1] // shoulder angles close 
+	if(rshoulder != 0 && angleInThreshold(rshoulder[0], Math.PI/3, 0.25)) up += rshoulder[1] // to 60 deg
+	if(lelbow != 0 && angleInThreshold(lelbow[0], Math.PI, 0.25)) up += lelbow[1] // elbow angles close 
+	if(relbow != 0 && angleInThreshold(relbow[0], Math.PI, 0.25)) up += relbow[1] // to 180 deg
+
+	// down confidence
+	if(lside != 0 && angleInThreshold(lside[0], 0, 0.25)) down += lside[1] // body angle close to
+	if(rside != 0 && angleInThreshold(rside[0], 0, 0.25)) down += rside[1] // almost horizontal
+	if(lshoulder != 0 && angleInThreshold(lshoulder[0], 0, 0.25)) down += lshoulder[1] // shoulder angles close 
+	if(rshoulder != 0 && angleInThreshold(rshoulder[0], 0, 0.25)) down += rshoulder[1] // to 0 deg
+	if(lelbow != 0 && angleInThreshold(lelbow[0], Math.PI/2, 0.25)) down += lelbow[1] // elbow angles close 
+	if(relbow != 0 && angleInThreshold(relbow[0], Math.PI/2, 0.25)) down += relbow[1] // to 90 deg
+
+	return down - up
 
 }
 
