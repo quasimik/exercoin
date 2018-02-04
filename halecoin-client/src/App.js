@@ -43,7 +43,7 @@ class App extends Component {
     this.state = { pushUpCount: 0 }; // <- set up react state
   }
 
-  componentWillMount(){
+  componentDidMount(){
 
     // Firebase DB ref
     let puRef = fire.database().ref('pushUpCount');
@@ -60,7 +60,7 @@ class App extends Component {
     // Increment push-up count in Firebase DB
     fire.database().ref('pushUpCount').set(this.state.pushUpCount + 1);
   }
-  
+
   render() {
     return (
         <form onSubmit={this.incPuCount.bind(this)}>
