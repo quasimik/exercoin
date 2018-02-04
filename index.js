@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const watch = require('node-watch')
-
+const sgMail = require('@sendgrid/mail')
 const firebase = require('firebase')
 var config = {
     apiKey: "AIzaSyAvaBf80ZrK7TH2xhpJ2S-zBFRyvVLdeFk",
@@ -25,6 +25,10 @@ var keypointNames = ["head", "neck",
 
 var checkAverage = 0
 var checkReset = true
+
+var quickCount = 0
+
+sgMail.setApiKey("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")
 
 watch('./openpose-json/', { filter: /\.json$/ }, function(evt, name) {
 	if(evt == 'update') {
@@ -73,19 +77,35 @@ watch('./openpose-json/', { filter: /\.json$/ }, function(evt, name) {
 				checkAverage += check
 				checkAverage /= 2
 
-				if(checkReset == true && checkAverage > 1) {
+				console.log(name, check, checkAverage)
+
+				if(checkReset == true && checkAverage > 0.3) {
 					console.log("ARE YOU DOWN ARE YOU DOWN ARE YOU DOWN ARE YOU DOWNDOWNDOWN")
+					console.log("ARE YOU DOWN ARE YOU DOWN ARE YOU DOWN ARE YOU DOWNDOWNDOOOOWN~~~")
 					checkReset = false
+					quickCount++
     				firebase.database().ref('pushUpCount').once('value').then(function(snapshot) {
   						//var username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
   						fire.database().ref('pushUpCount').set(snapshot.val() + 1);
+
+						if(quickCount % 5 == 0) {
+							const msg = {
+								to: 'williamjlee1@gmail.com',
+								from: 'easy@halecoin.io',
+								subject: 'HaleCoin Update!',
+								text: 'Congratulations! You just completed another 5 pushups! You now have ' + (snapshot.val() + 1) + ' pushups!'
+							}
+							sgMail.send(msg)
+							console.log("Sending mail...")
+						}
 					});
 				}
 
-				if(checkAverage < 0.025) {
+				if(checkAverage < 0.2) {
 					checkReset = true
 					checkAverage = 0
 				}
+
 			}
 		});
 	}
@@ -130,13 +150,20 @@ function checkPushup(keyAngles) {
 	if(lelbow != 0 && angleInThreshold(lelbow[0], Math.PI, 0.25)) up += lelbow[1] // elbow angles close 
 	if(relbow != 0 && angleInThreshold(relbow[0], Math.PI, 0.25)) up += relbow[1] // to 180 deg */
 
+
 	// down confidence
-	if(lside != 0 && lside[1] > 0.3 && angleInThreshold(lside[0], 0, 0.2)) down += lside[1] / 2 // body angle close to
-	if(rside != 0 && rside[1] > 0.3 && angleInThreshold(rside[0], 0, 0.2)) down += rside[1] / 2 // almost horizontal
-	if(lshoulder != 0 && lshoulder[1] > 0.3 && angleInThreshold(lshoulder[0], 0, 0.25)) down += lshoulder[1] // shoulder angles close 
-	if(rshoulder != 0 && rshoulder[1] > 0.3 && angleInThreshold(rshoulder[0], 0, 0.25)) down += rshoulder[1] // to 0 deg
-	if(lelbow != 0 && lelbow[1] > 0.3 && angleInThreshold(lelbow[0], Math.PI/2, 0.25)) down += lelbow[1] // elbow angles close 
-	if(relbow != 0 && relbow[1] > 0.3 && angleInThreshold(relbow[0], Math.PI/2, 0.25)) down += relbow[1] // to 90 deg
+	var tempMax = 0
+	if(lside != 0 && lside[1] > 0.3 && angleInThreshold(lside[0], 0, 0.2)) tempMax = lside[1] / 2 // body angle close to
+	if(rside != 0 && rside[1] > 0.3 && angleInThreshold(rside[0], 0, 0.2)) tempMax = Math.max(tempMax, rside[1] / 2) // almost horizontal
+	down += tempMax
+	tempMax = 0
+	if(lshoulder != 0 && lshoulder[1] > 0.3 && angleInThreshold(lshoulder[0], 0, 0.25)) tempMax = lshoulder[1] // shoulder angles close 
+	if(rshoulder != 0 && rshoulder[1] > 0.3 && angleInThreshold(rshoulder[0], 0, 0.25)) tempMax = Math.max(tempMax, rshoulder[1]) // to 0 deg
+	down += tempMax
+	tempMax = 0
+	if(lelbow != 0 && lelbow[1] > 0.3 && angleInThreshold(lelbow[0], Math.PI/2, 0.25)) tempMax = lelbow[1] // elbow angles close 
+	if(relbow != 0 && relbow[1] > 0.3 && angleInThreshold(relbow[0], Math.PI/2, 0.25)) tempMax = Math.max(tempMax, relbow[1]) // to 90 deg
+	down += tempMax
 
 	return down
 
