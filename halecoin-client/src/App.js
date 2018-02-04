@@ -38,14 +38,13 @@ const HALE_COIN_PER_PUSHUP = 50000000000000000
 //     animationDuration: '1s'
 //   }
 // })
-
-
 class App extends Component {
 
   constructor(props) {
     super(props);
     this.state = { 
       pushUpCount: 0, 
+      haleCoinEarned: 0, 
       haleCoinBal: 0, 
 
       playing: Sound.status.STOPPED,
@@ -133,8 +132,8 @@ class App extends Component {
   }
 
   resetPUHandler() {
-    fire.database().ref('pushUpCount').set(0);
     fire.database().ref('haleCoinEarned').set(0);
+    fire.database().ref('pushUpCount').set(0);
   }
 
   incrementPUHandler(element){
@@ -193,7 +192,7 @@ class App extends Component {
 
           <Row>
             <Col xsOffset={3} xs={6}>
-              <img style={{ width: '500px', height: '300px', border: '6px solid #f9e7e5' }} src="http://169.234.110.162:8080/video" />
+              <img style={{ width: '500px', height: '300px', border: '6px solid #f9e7e5', boxShadow: '0 0 5px #000' }} src="http://169.234.110.162:8080/video" />
             </Col>
           </Row>
           
