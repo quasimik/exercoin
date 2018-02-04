@@ -108,18 +108,17 @@ contract TokenERC20 {
     /**
      * Earn some coins for oneself.
      */
-    function earnCoin(uint _amount) public returns (bool success){
-        require(balanceOf[owner] <= _amount);
+    function earnCoin(uint _amount) public {
+        require(balanceOf[owner] >= _amount);
 
         _transfer(owner, msg.sender, _amount);
         
-        return true;
     }
 
     /**
      * Increment the world supply of the token
      */
-    function incrementSupply(uint _amount) public returns (bool success){
+    function incrementSupply(uint _amount) public {
         require(msg.sender == owner);
 
         totalSupply += _amount;
