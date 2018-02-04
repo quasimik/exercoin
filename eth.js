@@ -1,3 +1,5 @@
+const Web3 = require('web3');
+
 class Eth {
     constructor() {
         this.address = "0x2dee7a447dc2376c9159ff4b4caf3ae0c6cc31cd"
@@ -9,21 +11,21 @@ class Eth {
 
             var contract = web3.eth.contract(abi);
 
-            var contractInstance = contract.at(address);
+            this.contractInstance = contract.at(address);
             console.log("done set-up!");
         } else {
             console.log("entered else statement");
-            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545")); 
+            var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545")); 
         }
     }
 
 
     getBalance(){
-        return contractInstance.balanceOf(web3.eth.defaultAccount);   
+        return this.contractInstance.balanceOf(web3.eth.defaultAccount);   
     }
 
     earnCoin(amount){
-        contractInstance.earnCoin(amount);
+        this.contractInstance.earnCoin(amount);
     }
 }
 
