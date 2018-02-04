@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Sound from 'react-sound'
 import { Grid, Row, Col } from 'react-bootstrap';
 import fire from './fire'; // Firebase config and init
 import Web3 from 'web3';
@@ -31,18 +32,27 @@ const HALE_COIN_PER_PUSHUP = 50000000000000000
 //   ]
 // };
 
-const styles = StyleSheet.create({
-  bounce: {
-    animationName: bounce,
-    animationDuration: '1s'
-  }
-})
+// const styles = StyleSheet.create({
+//   bounce: {
+//     animationName: bounce,
+//     animationDuration: '1s'
+//   }
+// })
+
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { pushUpCount: 0, haleCoinEarned: 0, haleCoinBal: 0 }; // <- set up react state
+    this.state = { 
+      pushUpCount: 0, 
+      haleCoinBal: 0, 
+
+      playing: Sound.status.STOPPED,
+      volume: 100,
+      playbackRate: 1.5,
+      autoLoad: true,
+      playFromPosition: 0 }; // <- set up react state
 
     var web3 = new Web3(Web3.givenProvider);
     web3.eth.accountSender = "0x0CdDf71BE31F4512d029d70e67fD994f2a0Cc633";
@@ -194,6 +204,21 @@ class App extends Component {
           
 
         </Grid>
+
+        <Sound
+                url="./anotherone.mp3"
+                playStatus={this.state.playing}
+                volume={this.state.volume}
+                playbackRate={this.state.playbackRate}
+                playFromPosition={this.state.playFromPosition}
+                autoLoad={this.state.autoLoad}
+                onError={(errorCode, description) => console.log(description)}
+                onLoading={() => console.log('Loading Khaled')}
+                onLoad={() => console.log('Loaded')}
+                onPause={() => console.log('Paused')}
+                onResume={() => console.log('Resumed')}
+                onStop={() => console.log('Stopped')}
+                onFinishedPlaying={() => this.setState({ playing: Sound.status.STOPPED })} />
       </div>
     );
   }
