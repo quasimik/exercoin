@@ -1,5 +1,32 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  color: #f6aa1c;
+}
+
+h1 {
+  font-family: 'Biryani', sans-serif;
+}
+
+.num {
+  font-family: 'Fira Mono';
+  font-size: 4em;
+}
+
+.counterTransition-enter {
+  opacity: 0.01;
+}
+
+.counterTransition-enter.counterTransition-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.counterTransition-leave {
+  opacity: 1;
+}
+
+.counterTransition-leave.counterTransition-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
 }

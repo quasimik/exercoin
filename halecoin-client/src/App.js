@@ -1,55 +1,53 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
-import fire from './fire';
-import YouTube from 'react-youtube';
+import fire from './fire'; // Firebase config and init
 import Web3 from 'web3';
+// import { bounce } from 'react-animations';
+// import { StyleSheet, css } from 'aphrodite';
+// import YouTube from 'react-youtube';
+// import { FirebaseAuth } from 'react-firebaseui';
+// import firebase from 'firebase';
+import Particles from 'react-particles-js';
+// import Anime from 'react-anime'
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+// import Tx from 'ethereumjs-tx';
 
-// class App extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = { messages: [] }; // <- set up react state
-//   }
-//   componentWillMount(){
-//     /* Create reference to messages in Firebase Database */
-//     let messagesRef = fire.database().ref('messages').orderByKey().limitToLast(100);
-//     messagesRef.on('child_added', snapshot => {
-//       /* Update React state when message is added at Firebase Database */
-//       let message = { text: snapshot.val(), id: snapshot.key };
-//       this.setState({ messages: [message].concat(this.state.messages) });
-//     })
-//   }
-//   addMessage(e){
-//     e.preventDefault(); // <- prevent form submit from reloading the page
-//     /* Send the message to Firebase */
-//     fire.database().ref('messages').push( this.inputEl.value );
-//     this.inputEl.value = ''; // <- clear the input
-//   }
-//   render() {
-//     return (
-//         <form onSubmit={this.addMessage.bind(this)}>
-//           <input type="text" ref={ el => this.inputEl = el }/>
-//           <input type="submit"/>
-//           <ul>
-//             {  // Render the list of messages 
-//               this.state.messages.map( message => <li key={message.id}>{message.text}</li> )
-//             }
-//           </ul>
-//         </form>
-//     );
-//   }
-// }
+// import Background from './background.jsx'
+
+
+const HALE_COIN_PER_PUSHUP = 50000000000000000
+
+
+// // Configure FirebaseUI.
+// const uiConfig = {
+//   // Popup signin flow rather than redirect flow.
+//   signInFlow: 'popup',
+//   // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
+//   signInSuccessUrl: '/signedIn',
+//   // We will display Google and Facebook as auth providers.
+//   signInOptions: [
+//     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+//     firebase.auth.FacebookAuthProvider.PROVIDER_ID
+//   ]
+// };
+
+const styles = StyleSheet.create({
+  bounce: {
+    animationName: bounce,
+    animationDuration: '1s'
+  }
+})
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { pushUpCount: 0, haleCoinBal: 0 }; // <- set up react state
+    this.state = { pushUpCount: 0, haleCoinEarned: 0, haleCoinBal: 0 }; // <- set up react state
 
     var web3 = new Web3(Web3.givenProvider);
-    web3.eth.account = "0x0CdDf71BE31F4512d029d70e67fD994f2a0Cc633";
-    // var abi = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_amount","type":"uint256"}],"name":"earnCoin","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_amount","type":"uint256"}],"name":"incrementSupply","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"initialSupply","type":"uint256"},{"name":"tokenName","type":"string"},{"name":"tokenSymbol","type":"string"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}]
-    // var address = '0x2dee7a447dc2376c9159ff4b4caf3ae0c6cc31cd';
-    // this.contract = new web3.eth.Contract(abi, address);
+    web3.eth.accountSender = "0x0CdDf71BE31F4512d029d70e67fD994f2a0Cc633";
+    web3.eth.accountReceiver = "0x73c3dF6BC9b859A38B60baEe2f3B4FcD98E86923";
+    this.accountSenderAccount = web3.eth.accounts.privateKeyToAccount('84edd0b528a087fc6c0430b08f2b2a9b21a0632829fff49ffe738325502204a3');
     this.eth = web3.eth
   }
 
@@ -58,62 +56,134 @@ class App extends Component {
     // Firebase DB ref
     let pushupReference = fire.database().ref('pushUpCount');
 
+    // Firebase DB ref
+    let haleCoinReference = fire.database().ref('haleCoinEarned');
+
     // Eth
     let haleCoinBal = 0;
 
     // Update React state on ref change
     pushupReference.on('value', snapshot => {
+
+      // Increment pushup count and particles count
       this.setState({ pushUpCount: snapshot.val() });
-      this.eth.getBalance(this.eth.account).then( (res) => { this.setState({ haleCoinBal: res / 1000000000000000000 }) });
+      console.log(this.state.particleScale)
+      this.eth.getBalance(this.eth.accountReceiver).then( (res) => { this.setState({ haleCoinBal: res }) });
+
+      // Increment halecoins earned
+      fire.database().ref('haleCoinEarned').set(this.state.haleCoinEarned + HALE_COIN_PER_PUSHUP);
+    })
+
+    // Update React state on ref change
+    haleCoinReference.on('value', snapshot => {
+      this.setState({ haleCoinEarned: snapshot.val() });
     })
   }
 
-  getBalance(){
-    // this.contract.methods.balanceOf(this.eth.account).call().then( (res) => { console.log(res); return res; });
-    var bal = this.eth.getBalance(this.eth.account).then( (res) => {console.log(res); return res;});
-  }
+  // getBalance(){
+  //   var bal = this.eth.getBalance(this.eth.accountReceiver).then( (res) => {console.log(res); return res;});
+  // }
 
-  earnCoin(amount){
-    // this.contract.earnCoin(amount);
-  }
+  // transferCoinOnePU(){
+    // this.eth.accounts.signTransaction({ from: this.eth.accountSender, to: this.eth.accountReceiver, value: HALE_COIN_PER_PUSHUP, gas: '10000000' }, '84edd0b528a087fc6c0430b08f2b2a9b21a0632829fff49ffe738325502204a3').then( (res) => {
+    //   this.eth.sendSignedTransaction(res);
+    // });
+    // this.eth.sendTransaction({from: this.eth.accountSender, to:this.eth.accountReceiver, value: HALE_COIN_PER_PUSHUP, gasLimit: 21000, gasPrice: 20000000000})
+
+    // this.eth.personal.unlockAccount(this.eth.accountSender, 'qazxcdews123', 1000);
+    // this.eth.signTransaction({
+    //     from: this.eth.accountSender,
+    //     gasPrice: "20000000000",
+    //     gas: "21000",
+    //     to: this.eth.accountReceiver,
+    //     value: HALE_COIN_PER_PUSHUP,
+    //     data: ""
+    // }).then( () => {
+    //   this.eth.sendSignedTransaction;
+    // });
+    // var privateKey = new Buffer('84edd0b528a087fc6c0430b08f2b2a9b21a0632829fff49ffe738325502204a3', 'hex')
+    // var rawTx = {
+    //   gasPrice: '0x09184e72a000',
+    //   gasLimit: '0x2710',
+    //   to: this.eth.accountReceiver,
+    //   value: HALE_COIN_PER_PUSHUP,
+    //   data: '0x7f7465737432000000000000000000000000000000000000000000000000000000600057'
+    // }
+
+  //   var tx = new Tx(rawTx);
+  //   tx.sign(privateKey);
+
+  //   var serializedTx = tx.serialize();
+
+  //   this.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+  //   .on('receipt', console.log);
+  // }
 
   incrementPU() {
   }
 
+  resetPUHandler() {
+    fire.database().ref('pushUpCount').set(0);
+    fire.database().ref('haleCoinEarned').set(0);
+  }
+
   incrementPUHandler(element){
     element.preventDefault(); // <- prevent form submit from reloading the page
+
     // Increment push-up count in Firebase DB
     fire.database().ref('pushUpCount').set(this.state.pushUpCount + 1);
+
+    // Actually send the relevant coins (obviously not for production)
+    // this.transferCoinOnePU()
   }
 
   render() {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', textAlign: 'center', 
+                    background: 'radial-gradient(at bottom, #621708, #220901)' }}>
+        <Particles  
+          style={{ position: 'fixed', width: '100vw', height: '100vh' }} 
+          params={{ particles: { number: { value: 80 + this.state.haleCoinEarned * 10 }, size: { value: 5 }, line_linked: { enable: false }, move: { speed: 12 + this.state.haleCoinEarned * 2 } } }}
+        />
         <Grid>
+          {/*}
+          <Row>
+            <Col xsOffset={3} xs={6}>
+              <FirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
+            </Col>
+          </Row>
+        */}
 
           <Row>
-            <Col xsOffset={3} xs={3}>
-              <h1 style={{ fontFamily: 'Berkshire Swash' }}>Push-ups</h1>
+            <Col xsOffset={2} xs={4}>
+              <h1 onClick={this.resetPUHandler.bind(this)}>PUSHUPS</h1>
             </Col>
-            <Col xs={3}>
-              <h1 style={{ fontFamily: 'Berkshire Swash' }}>HaleCoins</h1>
+            <Col xs={4}>
+              <h1>HALECOINS</h1>
             </Col>
+            {/*<Col xs={4}>
+              <h1 style={{ fontFamily: 'Berkshire Swash' }}>Wallet Balance</h1>
+              <h5>(Delay is intrinsic to Ethereum network)</h5>
+            </Col>*/}
           </Row>
 
           <Row>
-            <Col xsOffset={3} xs={3}>
-              <h1 style={{ fontFamily: 'Lato', fontSize: '4em' }} onClick={this.incrementPUHandler.bind(this)}>{this.state.pushUpCount}</h1>
+            <Col xsOffset={2} xs={4}>
+              <h1 className='num' onClick={this.incrementPUHandler.bind(this)}>{this.state.pushUpCount}</h1>
             </Col>
-            <Col xs={3}>
-              <h1 style={{ fontFamily: 'Lato', fontSize: '4em' }}>{this.state.haleCoinBal}</h1>
+            <Col xs={4}>
+              <h1 className='num'>{this.state.haleCoinEarned / 1000000000000000000}</h1>
             </Col>
+            {/*<Col xs={4}>
+              <h1 style={{ fontFamily: 'Lato', fontSize: '4em' }}>{this.state.haleCoinBal / 1000000000000000000}</h1>
+            </Col>*/}
           </Row>
 
-          <Row><Col><div style={{ padding: '2em' }} /></Col></Row>
+          <Row><Col xs={12}><div style={{ padding: '2em' }} /></Col></Row>
 
           <Row>
             <Col xsOffset={3} xs={6}>
-              <img style={{ width: '500px', height: '300px' }} src="http://169.234.110.162:8080/video" />
+              <img style={{ width: '500px', height: '300px', border: '6px solid #f9e7e5' }} src="http://169.234.110.162:8080/video" />
             </Col>
           </Row>
           
@@ -126,48 +196,6 @@ class App extends Component {
         </Grid>
       </div>
     );
-    // return (
-    //     <Grid>
-    //       <Row className="show-grid">
-    //         <Col xs={12} md={8}>
-    //           <form onSubmit={this.incrementPUHandler.bind(this)}>
-    //             <input type="submit"/>
-    //             <p>{this.state.pushUpCount}</p>
-    //           </form>
-    //         </Col>
-    //         <Col xs={6} md={4}>
-    //           <code>&lt;{'Col xs={6} md={4}'} /&gt;</code>
-    //         </Col>
-    //       </Row>
-
-    //       <Row className="show-grid">
-    //         <Col xs={6} md={4}>
-    //           <code>&lt;{'Col xs={6} md={4}'} /&gt;</code>
-    //         </Col>
-    //         <Col xs={6} md={4}>
-    //           <code>&lt;{'Col xs={6} md={4}'} /&gt;</code>
-    //         </Col>
-    //         <Col xsHidden md={4}>
-    //           <code>&lt;{'Col xsHidden md={4}'} /&gt;</code>
-    //         </Col>
-    //       </Row>
-
-    //       <Row className="show-grid">
-    //         <Col xs={6} xsOffset={6}>
-    //           <code>&lt;{'Col xs={6} xsOffset={6}'} /&gt;</code>
-    //         </Col>
-    //       </Row>
-
-    //       <Row className="show-grid">
-    //         <Col md={6} mdPush={6}>
-    //           <code>&lt;{'Col md={6} mdPush={6}'} /&gt;</code>
-    //         </Col>
-    //         <Col md={6} mdPull={6}>
-    //           <code>&lt;{'Col md={6} mdPull={6}'} /&gt;</code>
-    //         </Col>
-    //       </Row>
-    //     </Grid>
-    // );
   }
 }
 

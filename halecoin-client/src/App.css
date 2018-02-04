@@ -31,3 +31,22 @@
   font-size: 10em;
 }
 
+.counterTransition-enter {
+  opacity: 0.01;
+}
+
+.counterTransition-enter.counterTransition-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.counterTransition-leave {
+  opacity: 1;
+}
+
+.counterTransition-leave.counterTransition-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
+
+
