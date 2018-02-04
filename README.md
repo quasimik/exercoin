@@ -21,7 +21,7 @@ Your Daily Token Exercise.
 
 # Contract  
 We are using the Ropsten test network  
-Smart Contract Address: 0x2dee7a447dc2376c9159ff4b4caf3ae0c6cc31cd
-https://ropsten.etherscan.io/address/0x2dee7a447dc2376c9159ff4b4caf3ae0c6cc31cd
+Smart Contract Address: 0x863739cE14656e7E69CF241aeb3c6358584BeBCe
+https://ropsten.etherscan.io/address/0x863739ce14656e7e69cf241aeb3c6358584bebce
 
 Get test ethers here: https://faucet.metamask.io/  
