@@ -163,6 +163,10 @@ class App extends Component {
             </Col>
           </Row>
         */}
+          <Row>
+              <img style={{ width: '160px', height: '160px'}} src="./HaleCoin.png" />
+              <h1>HALECOIN</h1>
+          </Row>
 
           <Row>
             <Col xsOffset={2} xs={4}>
