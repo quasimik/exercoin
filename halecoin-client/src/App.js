@@ -74,6 +74,7 @@ class App extends Component {
     // Update React state on ref change
     pushupReference.on('value', snapshot => {
 
+      if(this.state.pushUpCount != 0) this.setState({ playing: Sound.status.PLAYING })
       // Increment pushup count and particles count
       this.setState({ pushUpCount: snapshot.val() });
       console.log(this.state.particleScale)
