@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Sound from 'react-sound'
+import Webcam from 'react-webcam'
 import { Grid, Row, Col } from 'react-bootstrap';
 import fire from './fire'; // Firebase config and init
 import Web3 from 'web3';
@@ -153,7 +154,12 @@ class App extends Component {
                     background: 'radial-gradient(at bottom, #621708, #220901)' }}>
         <Particles  
           style={{ position: 'fixed', width: '100vw', height: '100vh' }} 
-          params={{ particles: { number: { value: 80 + this.state.haleCoinEarned * 10 }, size: { value: 5 }, line_linked: { enable: false }, move: { speed: 12 + this.state.haleCoinEarned * 2 } } }}
+          params={{ particles: { number: { value: 80 + this.state.haleCoinEarned * 10 }, 
+                                 size: { value: 5 }, 
+                                 line_linked: { enable: false }, 
+                                 move: { speed: 12 + this.state.haleCoinEarned * 2 } 
+                               } 
+                 }}
         />
         <Grid>
           {/*}
@@ -196,8 +202,12 @@ class App extends Component {
           <Row><Col xs={12}><div style={{ padding: '2em' }} /></Col></Row>
 
           <Row>
-            <Col xsOffset={3} xs={6}>
-              <img style={{ width: '500px', height: '300px', border: '6px solid #f9e7e5', boxShadow: '0 0 5px #000' }} src="http://169.234.110.162:8080/video" />
+            <Col xsOffset={3} xs={6} >
+              <Webcam style={{ border: '6px solid #f9e7e5', boxShadow: '0 0 5px #000' }}
+                audio={false}
+                height={360}
+                width={480}
+              />
             </Col>
           </Row>
           
