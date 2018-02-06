@@ -43,7 +43,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      pushUpCount: 0, 
+      pushUpCount0: 0, 
+      pushUpCount1: 0, 
+      currentUser: false, // User 0
+
       haleCoinEarned: 0, 
       haleCoinBal: 0, 
 
@@ -63,22 +66,36 @@ class App extends Component {
   componentDidMount(){
 
     // Firebase DB ref
-    let pushupReference = fire.database().ref('pushUpCount');
+    let pushupReference0 = fire.database().ref('pushUpCount0');
+    let pushupReference1 = fire.database().ref('pushUpCount1');
 
     // Firebase DB ref
     let haleCoinReference = fire.database().ref('haleCoinEarned');
 
     // Eth
-    let haleCoinBal = 0;
+    // let haleCoinBal = 0;
 
     // Update React state on ref change
-    pushupReference.on('value', snapshot => {
+    pushupReference0.on('value', snapshot => {
 
-      if(this.state.pushUpCount != 0) this.setState({ playing: Sound.status.PLAYING })
+      if(this.state.pushUpCount0 !== 0) this.setState({ playing: Sound.status.PLAYING })
       // Increment pushup count and particles count
-      this.setState({ pushUpCount: snapshot.val() });
-      console.log(this.state.particleScale)
-      this.eth.getBalance(this.eth.accountReceiver).then( (res) => { this.setState({ haleCoinBal: res }) });
+      this.setState({ pushUpCount0: snapshot.val() });
+      // console.log(this.state.particleScale)
+      // this.eth.getBalance(this.eth.accountReceiver).then( (res) => { this.setState({ haleCoinBal: res }) });
+
+      // Increment halecoins earned
+      fire.database().ref('haleCoinEarned').set(this.state.haleCoinEarned + HALE_COIN_PER_PUSHUP);
+    })
+
+    // Update React state on ref change
+    pushupReference1.on('value', snapshot => {
+
+      if(this.state.pushUpCount1 !== 0) this.setState({ playing: Sound.status.PLAYING })
+      // Increment pushup count and particles count
+      this.setState({ pushUpCount1: snapshot.val() });
+      // console.log(this.state.particleScale)
+      // this.eth.getBalance(this.eth.accountReceiver).then( (res) => { this.setState({ haleCoinBal: res }) });
 
       // Increment halecoins earned
       fire.database().ref('haleCoinEarned').set(this.state.haleCoinEarned + HALE_COIN_PER_PUSHUP);
@@ -134,17 +151,28 @@ class App extends Component {
 
   resetPUHandler() {
     fire.database().ref('haleCoinEarned').set(0);
-    fire.database().ref('pushUpCount').set(0);
+    fire.database().ref('haleCoinEarned').set(0);
+    fire.database().ref('pushUpCount0').set(0);
+    fire.database().ref('pushUpCount1').set(0);
   }
 
   incrementPUHandler(element){
     element.preventDefault(); // <- prevent form submit from reloading the page
 
     // Increment push-up count in Firebase DB
-    fire.database().ref('pushUpCount').set(this.state.pushUpCount + 1);
+    if (this.state.currentUser !== false) {
+      fire.database().ref('pushUpCount0').set(this.state.pushUpCount + 1);
+    } else {
+      fire.database().ref('pushUpCount1').set(this.state.pushUpCount + 1);
+    }
 
     // Actually send the relevant coins (obviously not for production)
     // this.transferCoinOnePU()
+  }
+
+  switchHandler(element) {
+    element.preventDefault();
+    this.setState({ currentUser: !this.state.currentUser });
   }
 
   render() {
@@ -165,6 +193,12 @@ class App extends Component {
         */}
 
           <Row>
+            <Col xsOffset={11} xs={1}>
+              <p onClick={this.switchHandler.bind(this)}>Switch</p>
+            </Col>
+          </Row>
+
+          <Row>
             <Col xsOffset={2} xs={4}>
               <h1 onClick={this.resetPUHandler.bind(this)}>PUSHUPS</h1>
             </Col>
@@ -179,7 +213,8 @@ class App extends Component {
 
           <Row>
             <Col xsOffset={2} xs={4}>
-              <h1 className='num' onClick={this.incrementPUHandler.bind(this)}>{this.state.pushUpCount}</h1>
+              <h1 className='num' onClick={this.incrementPUHandler.bind(this)}>{this.state.currentUser ? this.state.pushUpCount1 : this.state.pushUpCount0}</h1>
+              <h5 className='num'>Opponent: {this.state.currentUser ? this.state.pushUpCount0 : this.state.pushUpCount1}</h5>
             </Col>
             <Col xs={4}>
               <h1 className='num'>{this.state.haleCoinEarned / 1000000000000000000}</h1>
