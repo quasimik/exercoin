@@ -1,8 +1,12 @@
-# HaleCoin
+<div align="center">
+    <img src="halecoin-client/public/HaleCoin.png", width="200">
+    <h1>HaleCoin</h1>
+</div>
 
-Your Daily Token Exercise.
+-----------------
 
-> hale : free from defect, disease, or infirmity; also, retaining exceptional health and vigor - "a hale and hearty old man"
+## Your Daily Token Exercise.
+> _HALE_ : free from defect, disease, or infirmity; also, retaining exceptional health and vigor - "a hale and hearty old man"
 [Merriam Webster](https://www.merriam-webster.com/dictionary/hale)
 
 Imagine being paid for every pushup you do. That's not just in your imagination anymore. Welcome to HaleCoin.
@@ -20,14 +24,12 @@ For instance, using HaleCoin for insurance payments not only benefits miners, bu
 HaleCoin - making the world hale and healthy.
 
 # Installation
-
 1. Install [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose).
 1. Clone the repo and cd into it
 1. `$ npm install`
 1. `$ cd halecoin-client` and `$ npm install`
 
 # Running
-
 1. cd into the Halecoin install directory.
 1. Start the listener with `$ node index.js`
 1. Start the OpenPose demo with `--write_json <halecoin install directory>/openpose-json` flag enabled.
